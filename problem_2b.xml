@@ -1,0 +1,61 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+
+<simulation name="problem 2b" type="fixed source">
+  <histories start="1" end="10000000" />
+    <timeCut   tCut="100000000.0" />
+</simulation>
+
+<distributions>
+  <linear      name="ang source" datatype="double" a = "0.0" b = "1.0" fa = "0.0" fb = "2.0" />
+  <delta       name="pos dist"   datatype="point"  x = "1.0e-9" y = "0.0" z = "0.0" />
+  <anisotropic name="dir dist"   datatype="point"  u = "1.0" v = "0.0" w = "0.0" distribution="ang source" />
+  <henyeyGreenstein name="henyey-greenstein scatter" datatype="double" a="0.25" />
+  <delta       name="erg dist"   datatype="double" a = "1.0" />
+</distributions>
+
+<nuclides>
+  <nuclide name="nuc1" A="1.0e30">
+    <capture xsa="0.02" xsb="0.0" />
+    <scatter xsa="0.98" xsb="0.0" distribution="henyey-greenstein scatter"/>
+  </nuclide>
+</nuclides>
+
+<materials>
+  <material name="mat1" density="1.0">
+    <nuclide name="nuc1" frac="1.0"/>
+  </material>
+</materials>
+
+<surfaces>
+  <plane name="px1" a="1.0" b="0.0" c="0.0" d="0.0"/>
+  <plane name="px2" a="1.0" b="0.0" c="0.0" d="10.0"/>
+</surfaces>
+
+<cells>
+  <cell name="slab" material="mat1" importance="1.0">
+    <surface name="px1" sense="+1"/>
+    <surface name="px2" sense="-1"/>
+  </cell>
+  <cell name="left outside" importance="0.0">
+    <surface name="px1" sense="-1"/>
+  </cell>
+  <cell name="right outside" importance="0.0">
+    <surface name="px2" sense="+1"/>
+  </cell>
+</cells>
+
+<estimators>
+  <current name="transmission">
+    <surface name="px2"/>
+    <lowBin lowBin = "0.0"       />
+    <dBin   dBin   = "10000.0"   />
+    <numBin numBin = "1"         />
+  </current>
+</estimators>
+
+<source>
+  <position  distribution="pos dist"/>
+  <direction distribution="dir dist"/>
+  <energy    distribution="erg dist"/>
+</source>
+

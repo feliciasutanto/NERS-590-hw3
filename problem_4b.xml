@@ -1,0 +1,93 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+
+<simulation name="problem 4b" type="fixed source">
+  <histories start="1" end="100000000" />
+    <timeCut   tCut="100000000.0" />
+</simulation>
+
+<distributions>
+  <isotropic          name="dir dist" datatype="point" />
+  <linAnisotropic     name="linear anisotropic scatter" datatype="double" muBar="0.3333333333" />
+  <uniform            name="isotropic scatter" datatype="double" a="-1.0" b="1.0" />
+  <sampleHollowSphere name="pos dist" datatype="point" r1="1.0" r2="2.0" />
+  <delta              name="erg dist" datatype="double" a="1.0" />
+</distributions>
+
+<nuclides>
+    <nuclide name="nuc1" A="1.0e30">
+        <capture xsa="1.0"  xsb="0.0" />
+        <scatter xsa="19.0" xsb="0.0" distribution="linear anisotropic scatter"/>
+    </nuclide>
+    <nuclide name="nuc2" A="1.0e30">
+        <capture xsa="1.0" xsb="0.0" />
+        <scatter xsa="4.0" xsb="0.0" distribution="isotropic scatter"/>
+    </nuclide>
+    <nuclide name="nuc3" A="1.0e30">
+        <capture xsa="59.0" xsb="0.0" />
+        <scatter xsa="1.0"  xsb="0.0" distribution="isotropic scatter"/>
+    </nuclide>
+</nuclides>
+
+<materials>
+    <material name="mat1" density="0.1">
+        <nuclide name="nuc1" frac="0.6666666667"/>
+        <nuclide name="nuc2" frac="0.3333333333" />
+    </material>
+    <material name="mat2" density="0.005">
+        <nuclide name="nuc3" frac="1.0"/>
+    </material>
+</materials>
+
+<surfaces>
+    <sphere    name="sph1" x0="0.0" y0="0.0" z0="0.0" rad="4.0"  />
+    <cylinderx name="cylx"          y0="0.0" z0="0.0" rad="0.5"  />
+    <plane     name="px1"  a="1.0"  b="0.0"  c="0.0"  d="14.0"   />
+    <plane     name="px2"  a="1.0"  b="0.0"  c="0.0"  d="19.0"   />
+    <sphere    name="sph2" x0="0.0" y0="0.0" z0="0.0" rad="40.0" />
+</surfaces>
+
+<cells>
+    <cell name="theSphere" material="mat1" importance="1.0">
+        <surface name="sph1" sense="-1"/>
+    </cell>
+    <cell name="detector" material="mat2" importance="1.0">
+        <surface name="px1"  sense="+1"/>
+        <surface name="px2"  sense="-1" />
+        <surface name="cylx" sense="-1" />
+    </cell>
+    <cell name="world left" importance="1.0">
+        <surface name="sph1" sense="+1"/>
+        <surface name="px1"  sense="-1"/>
+        <surface name="sph2" sense="-1"/>
+    </cell>
+    <cell name="world mid" importance="1.0">
+        <surface name="px1"   sense="+1"/>
+        <surface name="px2"   sense="-1"/>
+        <surface name="cylx"  sense="+1"/>
+        <surface name="sph2"  sense="-1"/>
+    </cell>
+    <cell name="world right" importance="1.0">
+        <surface name="px2"  sense="+1"/>
+        <surface name="sph2" sense="-1"/>
+    </cell>
+    <cell name="external" importance="0.0">
+        <surface name="sph2" sense="+1"/>
+    </cell>
+</cells>
+
+<estimators>
+    <pathLengthFlux name="path length flux" >
+        <type   type="absorption"/>
+        <cell   name="detector" />
+        <lowBin lowBin = "0.0"       />
+        <dBin   dBin   = "10000.0"   />
+        <numBin numBin = "1"         />
+    </pathLengthFlux>
+</estimators>
+
+<source>
+  <position  distribution="pos dist"/>
+  <direction distribution="dir dist"/>
+  <energy    distribution="erg dist"/>
+</source>
+

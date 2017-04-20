@@ -1,0 +1,126 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+
+<simulation name="problem 5" type="fixed source">
+  <histories start="1" end="100000000" />
+  <timeCut   tCut="100000000.0" />
+</simulation>
+
+<distributions>
+  <delta      name="pos dist" datatype="point" x = "1.5" y = "1.5" z = "0.0" />
+  <uniform    name="isotropic scatter" datatype="double" a="-1.0" b="1.0" />
+  <isotropic  name="dir dist" datatype="point" />
+  <delta      name="erg dist" datatype="double" a = "1.0" />
+</distributions>
+
+<nuclides>
+  <nuclide name="nuc1" A="1.0e30" >
+    <capture xsa="10.0" xsb="0.0" />
+    <scatter xsa="10.0" xsb="0.0" distribution="isotropic scatter"/>
+  </nuclide>
+  <nuclide name="nuc2" A="1.0e30" >
+      <capture xsa="100.0" xsb="0.0" />
+  </nuclide>
+  <nuclide name="nuc3" A="1.0e30" >
+      <capture xsa="59.0" xsb="0.0" />
+      <scatter xsa="1.0"  xsb="0.0" distribution="isotropic scatter"/>
+  </nuclide>
+</nuclides>
+
+<materials>
+  <material name="mat1" density="0.1">
+    <nuclide name="nuc1" frac="1.0"/>
+  </material>
+  <material name="mat2" density="0.1">
+      <nuclide name="nuc2" frac="1.0"/>
+  </material>
+  <material name="mat3" density="0.005">
+      <nuclide name="nuc3" frac="1.0"/>
+  </material>
+</materials>
+
+<surfaces>
+ <cylinderz name="cylz" x0="6.5" y0="1.5"          rad="0.5"  />
+ <plane     name="py1"  a="0.0"  b="1.0"  c="0.0"  d="0.0"    />
+ <plane     name="py2"  a="0.0"  b="1.0"  c="0.0"  d="3.0"    />
+ <plane     name="py3"  a="0.0"  b="1.0"  c="0.0"  d="6.0"    />
+ <plane     name="px1"  a="1.0"  b="0.0"  c="0.0"  d="0.0"    />
+ <plane     name="px2"  a="1.0"  b="0.0"  c="0.0"  d="4.0"    />
+ <plane     name="px3"  a="1.0"  b="0.0"  c="0.0"  d="5.0"    />
+ <plane     name="px4"  a="1.0"  b="0.0"  c="0.0"  d="9.0"    />
+ </surfaces>
+ 
+ <cells>
+ <cell name="cell1" material="mat1" importance="4.0">
+      <surface name="py2" sense="+1"/>
+      <surface name="py3" sense="-1"/>
+      <surface name="px1" sense="+1"/>
+      <surface name="px2" sense="-1"/>
+ </cell>
+ <cell name="cell2" material="mat1" importance="16.0">
+      <surface name="py2" sense="+1"/>
+      <surface name="py3" sense="-1"/>
+      <surface name="px2" sense="+1"/>
+      <surface name="px3" sense="-1"/>
+ </cell>
+ <cell name="cell3" material="mat1" importance="64.0">
+      <surface name="py2" sense="+1"/>
+      <surface name="py3" sense="-1"/>
+      <surface name="px3" sense="+1"/>
+      <surface name="px4" sense="-1"/>
+ </cell>
+ <cell name="cell4" material="mat1" importance="1.0">
+      <surface name="py1" sense="+1"/>
+      <surface name="py2" sense="-1"/>
+      <surface name="px1" sense="+1"/>
+      <surface name="px2" sense="-1"/>
+ </cell>
+ <cell name="cell5" material="mat2" importance="1.0">
+      <surface name="py1" sense="+1"/>
+      <surface name="py2" sense="-1"/>
+      <surface name="px2" sense="+1"/>
+      <surface name="px3" sense="-1"/>
+ </cell>
+ <cell name="cell6" material="mat1" importance="256.0">
+      <surface name="py1"  sense="+1"/>
+      <surface name="py2"  sense="-1"/>
+      <surface name="px3"  sense="+1"/>
+      <surface name="px4"  sense="-1"/>
+      <surface name="cylz" sense="+1"/>
+ </cell>
+ <cell name="cell7" material="mat3" importance="256.0">
+     <surface name="cylz" sense="-1"/>
+ </cell>
+ <cell name="external top" importance="0.0">
+      <surface name="py3" sense="+1"/>
+ </cell>
+ <cell name="external bottom" importance="0.0">
+     <surface name="py1" sense="-1"/>
+ </cell>
+ <cell name="external left" importance="0.0">
+     <surface name="py1" sense="+1"/>
+     <surface name="py3" sense="-1"/>
+     <surface name="px1" sense="-1"/>
+ </cell>
+ <cell name="external right" importance="0.0">
+     <surface name="py1" sense="+1"/>
+     <surface name="py3" sense="-1"/>
+     <surface name="px4" sense="+1"/>
+ </cell>
+ </cells>
+
+<estimators>
+  <pathLengthFlux name="path length flux" >
+     <type   type="absorption"/>
+     <cell   name="cell7" />
+     <lowBin lowBin = "0.0"       />
+     <dBin   dBin   = "10000.0"   />
+     <numBin numBin = "1"         />
+  </pathLengthFlux>
+</estimators>
+
+<source>
+  <position  distribution="pos dist"/>
+  <direction distribution="dir dist"/>
+  <energy    distribution="erg dist"/>
+</source>
+

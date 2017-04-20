@@ -1,0 +1,125 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+
+<simulation name="problem 6a" type="fixed source">
+    <histories start="1" end="100000000" />
+    <timeCut   tCut="100.0" />
+</simulation>
+
+<distributions>
+    <diskPositionX  name="pos dist" datatype="point"  x0="-1.00001" y0="0.0" z0="0.0" r="0.5"/>
+    <forwardPeak    name="dir dist" datatype="point" />
+    <uniform        name="isotropic scatter" datatype="double" a="-1.0" b="1.0" />
+    <linAnisotropic name="linear anisotropic scatter" datatype="double" muBar="0.2" />
+    <delta          name="erg dist" datatype="double" a="1.0" />
+</distributions>
+
+<nuclides>
+    <nuclide name="nuc1" A="2.0">
+        <capture xsa="0.0" xsb="0.1" />
+        <scatter xsa="2.4" xsb="0.0" distribution="linear anisotropic scatter"/>
+    </nuclide>
+    <nuclide name="nuc2" A="1.0">
+        <scatter xsa="1.0" xsb="0.5" distribution="isotropic scatter"/>
+    </nuclide>
+</nuclides>
+
+<materials>
+    <material name="mat1" density="0.1">
+        <nuclide name="nuc1" frac="1.0" />
+    </material>
+    <material name="mat2" density="0.1">
+        <nuclide name="nuc2" frac="1.0" />
+    </material>
+</materials>
+
+<surfaces>
+    <sphere    name="sph"    x0="0.0" y0="0.0" z0="0.0" rad="5.0"  />
+    <sphere    name="sphout" x0="0.0" y0="0.0" z0="0.0" rad="40.0"  />
+    <plane     name="px1"    a="1.0"  b="0.0"  c="0.0"  d="-25.0"  />
+    <plane     name="px2"    a="1.0"  b="0.0"  c="0.0"  d="-20.0"  />
+    <plane     name="px3"    a="1.0"  b="0.0"  c="0.0"  d="-1.0"   />
+    <plane     name="px4"    a="1.0"  b="0.0"  c="0.0"  d="20.0"   />
+    <plane     name="px5"    a="1.0"  b="0.0"  c="0.0"  d="25.0"   />
+    <cylinderx name="cyl"    y0="0.0" z0="-10.0" rad="0.5"         />
+    <conex     name="cone"   x0="3.0" y0="0.0" z0="0.0" a="8.0" b="1.0" c="1.0" />
+</surfaces>
+
+<cells>
+    <cell name="cell1" importance="0.0">
+        <surface name="px1"    sense="-1"/>
+        <surface name="sphout" sense="-1"/>
+    </cell>
+    <cell name="cell2" importance="1.0">
+        <surface name="px1"     sense="+1"/>
+        <surface name="px2"     sense="-1"/>
+        <surface name="cyl"     sense="+1"/>
+        <surface name="sphout"  sense="-1"/>
+    </cell>
+    <cell name="cell3" material="mat2" importance="1.0">
+        <surface name="px1"     sense="+1"/>
+        <surface name="px2"     sense="-1"/>
+        <surface name="cyl"     sense="-1"/>
+    </cell>
+    <cell name="cell4" importance="1.0">
+        <surface name="px2"     sense="+1"/>
+        <surface name="px4"     sense="-1"/>
+        <surface name="sph"     sense="+1"/>
+        <surface name="sphout"  sense="-1"/>
+    </cell>
+    <cell name="cell5" material="mat1" importance="1.0">
+        <surface name="px3"     sense="-1"/>
+        <surface name="sph"     sense="-1"/>
+        <surface name="cone"    sense="+1"/>
+    </cell>
+    <cell name="cell6" importance="1.0">
+        <surface name="px3"     sense="-1"/>
+        <surface name="cone"    sense="-1"/>
+        <surface name="sph"     sense="-1"/>
+    </cell>
+    <cell name="cell7" material="mat1" importance="1.0">
+        <surface name="px3"     sense="+1"/>
+        <surface name="sph"     sense="-1"/>
+    </cell>
+    <cell name="cell8" importance="1.0">
+        <surface name="px4"     sense="+1"/>
+        <surface name="px5"     sense="-1"/>
+        <surface name="cyl"     sense="+1"/>
+        <surface name="sphout"  sense="-1"/>
+    </cell>
+    <cell name="cell9" importance="0.0">
+        <surface name="px5"     sense="+1"/>
+        <surface name="sphout"  sense="-1"/>
+    </cell>
+    <cell name="cell10" material="mat2" importance="1.0">
+        <surface name="px4"     sense="+1"/>
+        <surface name="px5"     sense="-1"/>
+        <surface name="cyl"     sense="-1"/>
+    </cell>
+    <cell name="external" importance="0.0">
+        <surface name="sphout"  sense="+1"/>
+    </cell>
+</cells>
+
+<estimators>
+    <pathLengthFlux name="path length flux" >
+        <type   type   = "scatter"/>
+        <cell   name   = "cell3"  />
+        <lowBin lowBin = "0.0"    />
+        <dBin   dBin   = "5.0"    />
+        <numBin numBin = "20"     />
+    </pathLengthFlux>
+    <pathLengthFlux name="path length flux" >
+        <type   type   = "scatter"/>
+        <cell   name   = "cell10"  />
+        <lowBin lowBin = "0.0"    />
+        <dBin   dBin   = "5.0"    />
+        <numBin numBin = "20"     />
+    </pathLengthFlux>
+</estimators>
+
+<source>
+    <position  distribution="pos dist"/>
+    <direction distribution="dir dist"/>
+    <energy    distribution="erg dist" />
+</source>
+
